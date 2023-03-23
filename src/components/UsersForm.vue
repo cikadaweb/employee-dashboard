@@ -8,7 +8,6 @@
           color="info"
           block
           prepend-icon="mdi-account-multiple-plus"
-          font-weight-medium
           >
           Добавить нового сотрудника
         </v-btn>
