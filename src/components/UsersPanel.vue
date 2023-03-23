@@ -3,20 +3,22 @@
     <v-card-title class="user-panel__title mb-5">Список сотрудников</v-card-title>
 
     <v-card-actions class="d-flex flex-wrap">
-      <UsersControls />
+      <UsersControls :badgeFilter="badgeFilter" @changeBadge="changeBadge"/>
     </v-card-actions>
 
     <v-card-text>
-      <UserList :items="appStore.allEmployees"/>
+      <UserList :items="items"/>
     </v-card-text>
 
     <v-card-actions>
       <v-btn
+        v-if="appStore.isShowMoreButton"
         class="user-panel__btn elevation-0 text-none"
         rounded
         outline
         size="x-large"
         prepend-icon="mdi-restart"
+        @click="appStore.incrementPages"
       >
       Показать еще
       </v-btn>
@@ -28,11 +30,31 @@
 import UsersControls from '@/components/users/UsersControls.vue'
 import UserList from '@/components/users/UsersList.vue'
 
+import {
+  defineProps, PropType, defineEmits
+} from 'vue';
+
 import { useAppStore } from '@/store/app';
+
+import { IEmployee } from '@/store/employee.interfaces'
 
 const appStore = useAppStore();
 
-appStore.getEmployess();
+const emits = defineEmits(['changeBadge']);
+
+const props = defineProps({
+  items: {
+    type: Array as PropType<IEmployee>,
+    required: true,
+  },
+  badgeFilter: {
+    type: Number,
+  }
+});
+
+const changeBadge = (badgeNum: number) => {
+  emits('changeBadge', badgeNum);
+}
 
 </script>
 
