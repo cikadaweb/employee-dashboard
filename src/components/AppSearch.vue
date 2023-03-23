@@ -3,6 +3,8 @@
     <v-card-text
       class="px-7 py-7 mb-1">
       <v-text-field
+        v-model="searchInput"
+        @input="getEmployessByName"
         bg-color="blue-grey-lighten-5"
         density="compact"
         variant="solo"
@@ -17,6 +19,16 @@
 </template>
 
 <script setup lang="ts">
+import { emit } from 'process';
+import { ref, defineEmits } from 'vue';
+
+const emits = defineEmits(['changeInput']);
+
+const searchInput = ref('');
+
+const getEmployessByName = () => {
+  emits('changeInput', searchInput.value)
+}
 
 </script>
 
