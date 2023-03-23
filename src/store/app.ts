@@ -1,44 +1,70 @@
 // Utilities
 import { defineStore } from 'pinia'
 import  axios  from 'axios';
-
-interface IStatus {
-  tag_id: number,
-  tag: string,
-  description: string,
-}
-interface IEmployee {
-  id: 1,
-  full_name: string,
-  inn: string,
-  address: string,
-  date_birth: string,
-  age: number,
-  type_contract: string,
-  type_contact_id: number,
-  gender: string,
-  gender_id: number,
-  country: string,
-  country_id: number,
-  position: string,
-  position_id: number,
-  status: IStatus,
-}
+import { IEmployee } from '@/store/employee.interfaces'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    employees: [] as IEmployee[]
+    employees: [] as IEmployee[],
+    listPage: 1,
+    maxListPage: null,
+    isShowMoreButton: true
   }),
   actions: {
     async getEmployess() {
-      const response = await axios.get('https://employee-manager-8c728-default-rtdb.firebaseio.com/employees.json');
-      const data = await response.data;
-      this.employees = data;
+      try {
+        const response = await axios.get('https://employee-manager-8c728-default-rtdb.firebaseio.com/employees.json');
+        const data = await response.data;
+        this.employees = data;
+        this.maxListPage = Math.ceil(data.length / 4);
+      } catch (error) {
+        console.log('Error');
+        throw e
+      }
+    },
+    async getEmployessByName(searchInput: string) {
+      try {
+        const response = await axios.get('https://employee-manager-8c728-default-rtdb.firebaseio.com/employees.json');
+        const data = await response.data;
+        const filterData = data.filter((user: IEmployee) => {
+          return user.full_name.toLowerCase().includes(searchInput.toLocaleLowerCase())
+        })
+        this.employees = filterData;
+      } catch (e) {
+        console.log('Error');
+        throw e
+      }
+    },
+    async getEmployessByTag(badgeNum: number) {
+      try {
+        const response = await axios.get('https://employee-manager-8c728-default-rtdb.firebaseio.com/employees.json');
+        const data = await response.data;
+        this.listPage = 1;
+        this.isShowMoreButton = true;
+        if (badgeNum == 0) {
+          this.employees = data;
+        }
+        else {
+          const filterData = data.filter((user: IEmployee) => {
+            return user.status.tag_id == badgeNum
+          })
+          this.employees = filterData;
+        }
+      } catch (e) {
+        console.log('Error');
+        throw e
+      }
+    },
+    incrementPages() {
+      if (this.listPage < this.maxListPage) {
+        this.isShowMoreButton = false;
+      }
+      this.listPage += 1;
     }
   },
   getters: {
     allEmployees() {
-      return this.employees;
+      return this.employees.slice(0, this.listPage * 4);
     },
   },
 })
