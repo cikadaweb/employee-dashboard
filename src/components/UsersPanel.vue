@@ -6,23 +6,32 @@
       <UsersControls :badgeFilter="badgeFilter" @changeBadge="changeBadge"/>
     </v-card-actions>
 
-    <v-card-text>
-      <UserList :items="items"/>
-    </v-card-text>
+    <div v-if="items.length !== 0">
+      <v-card-text>
+        <UserList :items="items"/>
+      </v-card-text>
 
-    <v-card-actions>
-      <v-btn
-        v-if="appStore.isShowMoreButton"
-        class="user-panel__btn elevation-0 text-none"
-        rounded
-        outline
-        size="x-large"
-        prepend-icon="mdi-restart"
-        @click="appStore.incrementPages"
-      >
-      Показать еще
-      </v-btn>
-    </v-card-actions>
+      <v-card-actions>
+        <v-btn
+          v-if="appStore.isShowMoreButton"
+          class="user-panel__btn elevation-0 text-none"
+          rounded
+          outline
+          size="x-large"
+          prepend-icon="mdi-restart"
+          @click="appStore.incrementPages"
+        >
+        Показать еще
+        </v-btn>
+      </v-card-actions>
+    </div>
+
+    <div v-else>
+      <v-card-text class="text-h5 text-center py-16">
+        По такому запросу сотрудников не найдено
+      </v-card-text>
+    </div>
+
   </v-card>
 </template>
 
